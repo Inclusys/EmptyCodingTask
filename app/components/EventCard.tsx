@@ -6,12 +6,9 @@ type Props = {
   icon: string;
 };
 
-export function EventCard({ title, icon }: Props) {
+function useResponsiveLayout(aspectRatioThreshold = 2.5) {
     const [circleSize, setCircleSize] = useState(0);
     const [cardDimensions, setCardDimensions] = useState({ width: 0, height: 0 });
-    const circleSizeFactor = 0.4;
-    const titleSizeFactor = 0.3;
-    const ASPECT_RATIO_THRESHOLD = 2.5; // adjust this value
 
     const handleCircleLayout = (event) => {
         setCircleSize(event.nativeEvent.layout.width);
@@ -22,24 +19,26 @@ export function EventCard({ title, icon }: Props) {
         setCardDimensions({ width, height });
     };
 
-    const getIconSize = () => {
-        return circleSize * circleSizeFactor;
-    };
+    const isHorizontal = cardDimensions.height === 0
+        ? false
+        : cardDimensions.width / cardDimensions.height > aspectRatioThreshold;
 
-    const getTitleSize = () => {
-        return Math.min(circleSize * titleSizeFactor, 24);
-    };
+    return { circleSize, isHorizontal, handleCircleLayout, handleCardLayout };
+}
 
-    const isHorizontal = () => {
-        if (cardDimensions.height === 0) return false;
-        return cardDimensions.width / cardDimensions.height > ASPECT_RATIO_THRESHOLD;
-    };
+export function EventCard({ title, icon }: Props) {
+    const { circleSize, isHorizontal, handleCircleLayout, handleCardLayout } = useResponsiveLayout(2.5);
+    const circleSizeFactor = 0.4;
+    const titleSizeFactor = 0.15;
+
+    const getIconSize = () => circleSize * circleSizeFactor;
+    const getTitleSize = () => Math.min(circleSize * titleSizeFactor, 24);
 
     return (
         <View style={styles.card} onLayout={handleCardLayout}>
             <View style={[
                 styles.contentContainer,
-                isHorizontal() && styles.contentContainerHorizontal
+                isHorizontal && styles.contentContainerHorizontal
             ]}>
                 <View style={styles.iconContainer}>
                     <View style={styles.iconCircle} onLayout={handleCircleLayout}>
