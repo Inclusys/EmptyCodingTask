@@ -8,11 +8,18 @@ type Props = {
 
 export function EventCard({ title, icon }: Props) {
     const [circleSize, setCircleSize] = useState(0);
-    const circleSizeFactor = 0.4
-    const titleSizeFactor = 0.3
+    const [cardDimensions, setCardDimensions] = useState({ width: 0, height: 0 });
+    const circleSizeFactor = 0.4;
+    const titleSizeFactor = 0.3;
+    const ASPECT_RATIO_THRESHOLD = 2.5; // adjust this value
 
     const handleCircleLayout = (event) => {
         setCircleSize(event.nativeEvent.layout.width);
+    };
+
+    const handleCardLayout = (event) => {
+        const { width, height } = event.nativeEvent.layout;
+        setCardDimensions({ width, height });
     };
 
     const getIconSize = () => {
@@ -23,19 +30,29 @@ export function EventCard({ title, icon }: Props) {
         return Math.min(circleSize * titleSizeFactor, 24);
     };
 
+    const isHorizontal = () => {
+        if (cardDimensions.height === 0) return false;
+        return cardDimensions.width / cardDimensions.height > ASPECT_RATIO_THRESHOLD;
+    };
+
     return (
-        <View style={styles.card}>
-            <View style={styles.iconContainer}>
-                <View style={styles.iconCircle} onLayout={handleCircleLayout}>
-                    <Text style={[styles.icon, { fontSize: getIconSize() }]}>{icon}</Text>
+        <View style={styles.card} onLayout={handleCardLayout}>
+            <View style={[
+                styles.contentContainer,
+                isHorizontal() && styles.contentContainerHorizontal
+            ]}>
+                <View style={styles.iconContainer}>
+                    <View style={styles.iconCircle} onLayout={handleCircleLayout}>
+                        <Text style={[styles.icon, { fontSize: getIconSize() }]}>{icon}</Text>
+                    </View>
                 </View>
-            </View>
-            <View style={styles.titleContainer}>
-                <Text style={[styles.title, { fontSize: getTitleSize() }]}>{title}</Text>
+                <View style={styles.titleContainer}>
+                    <Text style={[styles.title, { fontSize: getTitleSize() }]}>{title}</Text>
+                </View>
             </View>
         </View>
     );
-    }
+}
 
 const styles = StyleSheet.create({
     card: {
@@ -44,19 +61,26 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 6,
     },
+    contentContainer: {
+        flex: 1,
+        flexDirection: "column",
+    },
+    contentContainerHorizontal: {
+        flexDirection: "row",
+    },
     icon: {
         // placeholder for now
     },
     title: {
         marginTop: 4,
-        fontFamily: "System", // San Francisco font on iOS
+        fontFamily: "System",
         color: "white",
         fontWeight: "bold",
     },
     iconContainer: {
         flex: 2,
-        justifyContent: "center", // centers icon vertically in its space
-        alignItems: "center", // centers icon horizontally
+        justifyContent: "center",
+        alignItems: "center",
     },
     titleContainer: {
         flex: 1,
