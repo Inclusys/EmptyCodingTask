@@ -3,11 +3,11 @@ import { EventCard } from "./components/EventCard";
 
 export default function App() {
   const dummyEvents = [
-    { title: "Feier", icon: "🎉" },
-    { title: "Football", icon: "🏈" },
-    { title: "Nachtisch", icon: "🍨" },
-    { title: "Halloween", icon: "🎃" },
-    { title: "Werkstatt", icon: "🪚" },
+	{ title: "Feier", icon: "🎉", backgroundColor: "#E91E63" },
+	{ title: "Football", icon: "🏈", backgroundColor: "#4CAF50" },
+	{ title: "Nachtisch", icon: "🍨", backgroundColor: "#03A9F4" },
+	{ title: "Halloween", icon: "🎃", backgroundColor: "#FF5722" },
+	{ title: "Werkstatt", icon: "🪚", backgroundColor: "#607D8B" },
   ];
 
   return (
@@ -17,6 +17,7 @@ export default function App() {
           key={index}
           title={event.title}
           icon={event.icon}
+		  backgroundColor={event.backgroundColor}
         />
       ))}
     </View>

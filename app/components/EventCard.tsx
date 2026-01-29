@@ -4,6 +4,7 @@ import { View, Text, StyleSheet } from "react-native";
 type Props = {
   title: string;
   icon: string;
+  backgroundColor?: string;
 };
 
 function useResponsiveLayout(aspectRatioThreshold = 2.5) {
@@ -26,7 +27,7 @@ function useResponsiveLayout(aspectRatioThreshold = 2.5) {
     return { circleSize, isHorizontal, handleCircleLayout, handleCardLayout };
 }
 
-export function EventCard({ title, icon }: Props) {
+export function EventCard({ title, icon, backgroundColor }: Props) {
     const { circleSize, isHorizontal, handleCircleLayout, handleCardLayout } = useResponsiveLayout(2.5);
     const circleSizeFactor = 0.4;
     const titleSizeFactor = 0.15;
@@ -35,7 +36,7 @@ export function EventCard({ title, icon }: Props) {
     const getTitleSize = () => Math.min(circleSize * titleSizeFactor, 24);
 
     return (
-        <View style={styles.card} onLayout={handleCardLayout}>
+        <View style={[styles.card, { backgroundColor: backgroundColor}]} onLayout={handleCardLayout}>
             <View style={[
                 styles.contentContainer,
                 isHorizontal && styles.contentContainerHorizontal
